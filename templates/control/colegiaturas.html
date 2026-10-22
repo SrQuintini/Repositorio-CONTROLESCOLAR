@@ -1,0 +1,45 @@
+{% extends 'base.html' %}
+{% from 'macros.html' import badge_cargo %}
+{% block titulo %}Colegiaturas{% endblock %}
+{% block contenido %}
+<h1>Colegiaturas</h1>
+<p class="sub">Genera cargos, registra pagos y envía recordatorios.</p>
+
+<div class="panel">
+  <h2>Generar cargo</h2>
+  <form method="post" class="fila">
+    <input type="hidden" name="accion" value="cargo">
+    <label>Concepto <input name="concepto" required placeholder="Colegiatura Noviembre 2026"></label>
+    <label>Monto <input type="number" step="0.01" min="0" name="monto" required></label>
+    <label>Fecha límite <input type="date" name="fecha_limite" required></label>
+    <label>Para
+      <select name="grupo_id"><option value="">Todos los alumnos</option>
+        {% for g in grupos %}<option value="{{ g.id }}">Grupo {{ g.nombre }}</option>{% endfor %}</select></label>
+    <button>Generar</button>
+  </form>
+</div>
+
+<div class="panel">
+  <div style="display:flex; justify-content:space-between; gap:12px; flex-wrap:wrap; margin-bottom:12px">
+    <div class="filtros">
+      {% for f, t in [('pendientes','Pendientes'),('pagados','Pagados'),('todos','Todos')] %}
+        <a class="boton chico {{ '' if filtro == f else 'sec' }}" href="?filtro={{ f }}">{{ t }}</a>
+      {% endfor %}
+    </div>
+    <form method="post"><input type="hidden" name="accion" value="recordatorios">
+      <button class="sec chico">Enviar recordatorios de vencidos</button></form>
+  </div>
+  <div class="tabla-wrap"><table>
+    <tr><th>Alumno</th><th>Concepto</th><th>Fecha límite</th><th class="n">Monto</th><th>Estado</th><th></th></tr>
+    {% for c in cargos %}
+    <tr>
+      <td><a href="{{ url_for('control.alumno_detalle', matricula=c.alumno.matricula) }}">{{ c.alumno.usuario.nombre }}</a><br><small>{{ c.alumno.matricula }}</small></td>
+      <td>{{ c.concepto }}</td><td>{{ c.fecha_limite }}</td><td class="n">{{ c.monto|dinero }}</td><td>{{ badge_cargo(c) }}</td>
+      <td>{% if not c.pagado %}<form method="post">
+        <input type="hidden" name="accion" value="pagar"><input type="hidden" name="colegiatura_id" value="{{ c.id }}">
+        <button class="chico">Registrar pago</button></form>{% endif %}</td>
+    </tr>
+    {% else %}<tr><td colspan="6" class="vacio">No hay cargos en este filtro.</td></tr>{% endfor %}
+  </table></div>
+</div>
+{% endblock %}

@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+{% block titulo %}Iniciar sesión{% endblock %}
+{% block contenido %}
+<div class="login panel">
+  <h1>Control Escolar</h1>
+  <p class="sub">Entra con tu correo institucional.</p>
+  <form method="post">
+    <label>Correo <input type="email" name="email" required autofocus></label>
+    <label>Contraseña <input type="password" name="password" required></label>
+    <button>Entrar</button>
+  </form>
+  <p class="demo">Cuentas de prueba (contraseña <code>1234</code>):<br>
+    Control: <code>control@escuela.mx</code><br>
+    Profesor: <code>profe.garcia@escuela.mx</code><br>
+    Alumno: <code>ana@escuela.mx</code></p>
+</div>
+{% endblock %}

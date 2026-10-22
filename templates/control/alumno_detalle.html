@@ -1,0 +1,43 @@
+{% extends 'base.html' %}
+{% from 'macros.html' import tabla_boleta, badge_cargo %}
+{% block titulo %}{{ alumno.usuario.nombre }}{% endblock %}
+{% block contenido %}
+<p><a href="{{ url_for('control.alumnos') }}">← Alumnos</a></p>
+<h1>{{ alumno.usuario.nombre }}</h1>
+<p class="sub">{{ alumno.matricula }} · {{ alumno.usuario.email }}{% if alumno.grupo %} · Grupo {{ alumno.grupo.nombre }}{% endif %}
+  · {% if alumno.usuario.activo %}<span class="badge b-ok">Activo</span>{% else %}<span class="badge b-mal">Inactivo</span>{% endif %}</p>
+
+<div class="tarjetas">
+  <div class="tarjeta"><div class="etq">Promedio general</div><div class="num">{{ promedio|cal }}</div></div>
+  <div class="tarjeta"><div class="etq">Adeudo</div><div class="num">{{ adeudo|dinero }}</div></div>
+</div>
+
+<div class="panel">
+  <h2>Boleta</h2>
+  {{ tabla_boleta(boleta) }}
+  <form method="post" action="{{ url_for('control.inscribir', alumno_id=alumno.id) }}" class="fila" style="margin-top:14px">
+    <label>Inscribir en materia
+      <select name="materia_id" required>{% for m in materias %}<option value="{{ m.id }}">{{ m.clave }} · {{ m.nombre }}</option>{% endfor %}</select>
+    </label>
+    <button class="sec">Inscribir</button>
+  </form>
+</div>
+
+<div class="panel">
+  <h2>Colegiaturas</h2>
+  <div class="tabla-wrap"><table>
+    <tr><th>Concepto</th><th>Fecha límite</th><th class="n">Monto</th><th>Estado</th><th></th></tr>
+    {% for c in cargos %}
+    <tr><td>{{ c.concepto }}</td><td>{{ c.fecha_limite }}</td><td class="n">{{ c.monto|dinero }}</td><td>{{ badge_cargo(c) }}</td>
+      <td>{% if not c.pagado %}
+        <form method="post" action="{{ url_for('control.colegiaturas_vista') }}">
+          <input type="hidden" name="accion" value="pagar"><input type="hidden" name="colegiatura_id" value="{{ c.id }}">
+          <button class="chico">Registrar pago</button></form>{% endif %}</td></tr>
+    {% else %}<tr><td colspan="5" class="vacio">Sin cargos.</td></tr>{% endfor %}
+  </table></div>
+</div>
+
+<form method="post" action="{{ url_for('control.cambiar_estado', usuario_id=alumno.usuario.id) }}">
+  <button class="sec">{{ 'Desactivar cuenta' if alumno.usuario.activo else 'Activar cuenta' }}</button>
+</form>
+{% endblock %}

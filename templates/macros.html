@@ -1,0 +1,26 @@
+{% macro badge_estatus(e) -%}
+  {% if e == 'Aprobado' %}<span class="badge b-ok">Aprobado</span>
+  {% elif e == 'Reprobado' %}<span class="badge b-mal">Reprobado</span>
+  {% else %}<span class="badge b-gris">{{ e }}</span>{% endif %}
+{%- endmacro %}
+
+{% macro badge_cargo(c) -%}
+  {% if c.pagado %}<span class="badge b-ok">Pagado {{ c.fecha_pago }}</span>
+  {% elif c.vencida %}<span class="badge b-mal">Vencido</span>
+  {% else %}<span class="badge b-aviso">Pendiente</span>{% endif %}
+{%- endmacro %}
+
+{% macro tabla_boleta(boleta) %}
+<div class="tabla-wrap"><table>
+  <tr><th>Materia</th><th>Profesor</th><th class="n">P1</th><th class="n">P2</th><th class="n">P3</th><th class="n">Promedio</th><th>Estatus</th></tr>
+  {% for f in boleta %}
+  <tr>
+    <td><strong>{{ f.materia }}</strong><br><small>{{ f.clave }}</small></td>
+    <td>{{ f.profesor }}</td>
+    <td class="n">{{ f.parciales[1]|cal }}</td><td class="n">{{ f.parciales[2]|cal }}</td><td class="n">{{ f.parciales[3]|cal }}</td>
+    <td class="n"><strong>{{ f.promedio|cal }}</strong></td>
+    <td>{{ badge_estatus(f.estatus) }}</td>
+  </tr>
+  {% else %}<tr><td colspan="7" class="vacio">Sin materias inscritas.</td></tr>{% endfor %}
+</table></div>
+{% endmacro %}

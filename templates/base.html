@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block titulo %}Control Escolar{% endblock %}</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='estilos.css') }}">
+</head>
+<body>
+{% if session.rol %}
+<header>
+  <span class="marca">Control Escolar</span>
+  <nav>
+    {% set ep = request.endpoint or '' %}
+    {% if session.rol == 'alumno' %}
+      <a href="{{ url_for('alumno.inicio') }}" class="activo">Mi boleta</a>
+    {% elif session.rol == 'profesor' %}
+      <a href="{{ url_for('profesor.inicio') }}" class="{{ 'activo' if ep.startswith('profesor') }}">Mis materias</a>
+    {% elif session.rol == 'control' %}
+      <a href="{{ url_for('control.inicio') }}" class="{{ 'activo' if ep == 'control.inicio' }}">Inicio</a>
+      <a href="{{ url_for('control.alumnos') }}" class="{{ 'activo' if ep.startswith('control.alumno') }}">Alumnos</a>
+      <a href="{{ url_for('control.profesores') }}" class="{{ 'activo' if ep == 'control.profesores' }}">Profesores</a>
+      <a href="{{ url_for('control.materias') }}" class="{{ 'activo' if ep == 'control.materias' }}">Materias</a>
+      <a href="{{ url_for('control.colegiaturas_vista') }}" class="{{ 'activo' if ep == 'control.colegiaturas_vista' }}">Colegiaturas</a>
+      <a href="{{ url_for('control.correos') }}" class="{{ 'activo' if ep == 'control.correos' }}">Correos</a>
+    {% endif %}
+  </nav>
+  <span class="usuario">{{ session.nombre }} · {{ session.rol|capitalize }} <a href="{{ url_for('auth.logout') }}">Salir</a></span>
+</header>
+{% endif %}
+<main>
+  {% with msgs = get_flashed_messages(with_categories=true) %}
+    {% if msgs %}<ul class="mensajes">{% for cat, m in msgs %}<li class="{{ cat }}">{{ m }}</li>{% endfor %}</ul>{% endif %}
+  {% endwith %}
+  {% block contenido %}{% endblock %}
+</main>
+</body>
+</html>

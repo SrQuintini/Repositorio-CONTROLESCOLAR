@@ -1,0 +1,53 @@
+{% extends 'base.html' %}
+{% block titulo %}Materias y grupos{% endblock %}
+{% block contenido %}
+<h1>Materias y grupos</h1>
+<p class="sub">Crea materias y grupos, asigna profesores e inscribe grupos completos.</p>
+
+<div class="panel">
+  <h2>Nueva materia</h2>
+  <form method="post" class="fila">
+    <input type="hidden" name="accion" value="materia">
+    <label>Nombre <input name="nombre" required></label>
+    <label>Clave <input name="clave" required></label>
+    <label>Profesor
+      <select name="profesor_id"><option value="">—</option>
+        {% for p in profesores %}<option value="{{ p.id }}">{{ p.usuario.nombre }}</option>{% endfor %}</select></label>
+    <button>Crear materia</button>
+  </form>
+</div>
+
+<div class="panel">
+  <h2>Nuevo grupo</h2>
+  <form method="post" class="fila">
+    <input type="hidden" name="accion" value="grupo">
+    <label>Nombre del grupo <input name="nombre" required placeholder="3A"></label>
+    <button>Crear grupo</button>
+  </form>
+  <p class="sub" style="margin:12px 0 0">Grupos: {% for g in grupos %}<strong>{{ g.nombre }}</strong> ({{ g.alumnos|length }}){% if not loop.last %}, {% endif %}{% else %}ninguno{% endfor %}</p>
+</div>
+
+<div class="panel">
+  <h2>Inscribir grupo completo en una materia</h2>
+  <form method="post" class="fila">
+    <input type="hidden" name="accion" value="inscribir_grupo">
+    <label>Grupo <select name="grupo_id" required>{% for g in grupos %}<option value="{{ g.id }}">{{ g.nombre }}</option>{% endfor %}</select></label>
+    <label>Materia <select name="materia_id" required>{% for m in materias %}<option value="{{ m.id }}">{{ m.clave }} · {{ m.nombre }}</option>{% endfor %}</select></label>
+    <button>Inscribir</button>
+  </form>
+</div>
+
+<div class="panel"><div class="tabla-wrap"><table>
+  <tr><th>Clave</th><th>Materia</th><th class="n">Inscritos</th><th>Profesor</th></tr>
+  {% for m in materias %}
+  <tr>
+    <td>{{ m.clave }}</td><td><strong>{{ m.nombre }}</strong></td><td class="n">{{ m.inscripciones|length }}</td>
+    <td><form method="post" class="fila">
+      <input type="hidden" name="accion" value="asignar"><input type="hidden" name="materia_id" value="{{ m.id }}">
+      <select name="profesor_id"><option value="">— Sin asignar —</option>
+        {% for p in profesores %}<option value="{{ p.id }}" {{ 'selected' if p.id == m.profesor_id }}>{{ p.usuario.nombre }}</option>{% endfor %}</select>
+      <button class="chico sec">Asignar</button></form></td>
+  </tr>
+  {% else %}<tr><td colspan="4" class="vacio">Aún no hay materias.</td></tr>{% endfor %}
+</table></div></div>
+{% endblock %}

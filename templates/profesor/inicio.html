@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+{% block titulo %}Mis materias{% endblock %}
+{% block contenido %}
+<h1>Mis materias</h1>
+<p class="sub">Elige una materia para capturar calificaciones.</p>
+<div class="panel"><div class="tabla-wrap"><table>
+  <tr><th>Clave</th><th>Materia</th><th class="n">Alumnos</th><th class="n">Promedio</th><th class="n">Reprobados</th><th></th></tr>
+  {% for r in resumen %}
+  <tr>
+    <td>{{ r.materia.clave }}</td><td><strong>{{ r.materia.nombre }}</strong></td>
+    <td class="n">{{ r.alumnos }}</td><td class="n">{{ r.promedio|cal }}</td>
+    <td class="n">{% if r.reprobados %}<span class="badge b-mal">{{ r.reprobados }}</span>{% else %}0{% endif %}</td>
+    <td><a class="boton chico" href="{{ url_for('profesor.materia', materia_id=r.materia.id) }}">Calificar</a></td>
+  </tr>
+  {% else %}<tr><td colspan="6" class="vacio">No tienes materias asignadas. Pide a Control Escolar que te asigne.</td></tr>{% endfor %}
+</table></div></div>
+{% endblock %}

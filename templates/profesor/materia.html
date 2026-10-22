@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+{% from 'macros.html' import badge_estatus %}
+{% block titulo %}{{ materia.nombre }}{% endblock %}
+{% block contenido %}
+<p><a href="{{ url_for('profesor.inicio') }}">← Mis materias</a></p>
+<h1>{{ materia.nombre }}</h1>
+<p class="sub">{{ materia.clave }} · {{ filas|length }} alumno(s). Deja vacío lo que aún no calificas.</p>
+
+<form method="post" class="panel">
+  <div class="tabla-wrap"><table>
+    <tr><th>Matrícula</th><th>Alumno</th>{% for p in parciales %}<th class="n">P{{ p }}</th>{% endfor %}<th class="n">Promedio</th><th>Estatus</th></tr>
+    {% for f in filas %}
+    <tr>
+      <td>{{ f.insc.alumno.matricula }}</td><td>{{ f.insc.alumno.usuario.nombre }}</td>
+      {% for p in parciales %}
+      <td class="n"><input class="cal" type="number" step="0.1" min="0" max="10" name="cal_{{ f.insc.id }}_{{ p }}"
+                 value="{{ f.parciales[p] if f.parciales[p] is not none else '' }}"></td>
+      {% endfor %}
+      <td class="n"><strong>{{ f.promedio|cal }}</strong></td>
+      <td>{{ badge_estatus(estatus(f.promedio)) }}</td>
+    </tr>
+    {% else %}<tr><td colspan="7" class="vacio">No hay alumnos inscritos.</td></tr>{% endfor %}
+  </table></div>
+  <p style="margin:16px 0 0; display:flex; gap:10px; flex-wrap:wrap">
+    <button>Guardar calificaciones</button>
+    <a class="boton sec" href="{{ url_for('profesor.materia_csv', materia_id=materia.id) }}">Descargar CSV</a>
+  </p>
+</form>
+{% endblock %}

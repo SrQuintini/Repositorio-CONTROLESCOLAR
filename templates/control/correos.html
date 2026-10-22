@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+{% block titulo %}Correos{% endblock %}
+{% block contenido %}
+<h1>Correos</h1>
+<p class="sub">Bitácora de correos generados por el sistema. "Solo registrado" significa que no hay servidor SMTP configurado en el .env.</p>
+<div class="panel"><div class="tabla-wrap"><table>
+  <tr><th>Fecha</th><th>Para</th><th>Asunto y mensaje</th><th>Estado</th></tr>
+  {% for c in correos %}
+  <tr>
+    <td style="white-space:nowrap">{{ c.fecha.strftime('%Y-%m-%d %H:%M') }}</td>
+    <td>{{ c.destinatario }}</td>
+    <td><strong>{{ c.asunto }}</strong><pre class="cuerpo">{{ c.cuerpo }}</pre></td>
+    <td>{% if c.enviado %}<span class="badge b-ok">Enviado</span>{% else %}<span class="badge b-gris">Solo registrado</span>{% endif %}</td>
+  </tr>
+  {% else %}<tr><td colspan="4" class="vacio">Sin correos.</td></tr>{% endfor %}
+</table></div></div>
+{% endblock %}

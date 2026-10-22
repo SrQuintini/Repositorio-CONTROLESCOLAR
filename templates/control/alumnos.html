@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+{% from 'macros.html' import badge_estatus %}
+{% block titulo %}Alumnos{% endblock %}
+{% block contenido %}
+<h1>Alumnos</h1>
+<p class="sub">Registro y consulta de alumnos.</p>
+
+<div class="panel">
+  <h2>Registrar alumno</h2>
+  <form method="post" class="fila">
+    <label>Nombre <input name="nombre" required></label>
+    <label>Correo <input type="email" name="email" required></label>
+    <label>Contraseña <input name="password" required value="1234"></label>
+    <label>Matrícula <input name="matricula" required></label>
+    <label>Grupo
+      <select name="grupo_id"><option value="">—</option>
+        {% for g in grupos %}<option value="{{ g.id }}">{{ g.nombre }}</option>{% endfor %}
+      </select></label>
+    <button>Registrar</button>
+  </form>
+</div>
+
+<div class="panel"><div class="tabla-wrap"><table>
+  <tr><th>Matrícula</th><th>Nombre</th><th>Grupo</th><th class="n">Promedio</th><th>Estatus</th><th class="n">Adeudo</th></tr>
+  {% for a in filas %}
+  <tr>
+    <td><a href="{{ url_for('control.alumno_detalle', matricula=a.matricula) }}">{{ a.matricula }}</a></td>
+    <td>{{ a.nombre }}<br><small>{{ a.email }}</small></td>
+    <td>{{ a.grupo or '—' }}</td>
+    <td class="n">{{ a.promedio|cal }}</td>
+    <td>{{ badge_estatus(a.estatus) }}</td>
+    <td class="n">{{ a.adeudo|dinero }}</td>
+  </tr>
+  {% else %}<tr><td colspan="6" class="vacio">Aún no hay alumnos.</td></tr>{% endfor %}
+</table></div></div>
+{% endblock %}

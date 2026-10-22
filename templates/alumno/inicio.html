@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+{% from 'macros.html' import tabla_boleta, badge_cargo %}
+{% block titulo %}Mi boleta{% endblock %}
+{% block contenido %}
+<h1>Hola, {{ alumno.usuario.nombre }}</h1>
+<p class="sub">Matrícula {{ alumno.matricula }}{% if alumno.grupo %} · Grupo {{ alumno.grupo.nombre }}{% endif %}</p>
+
+<div class="tarjetas">
+  <div class="tarjeta"><div class="etq">Promedio general</div><div class="num">{{ promedio|cal }}</div></div>
+  <div class="tarjeta"><div class="etq">Materias</div><div class="num">{{ boleta|length }}</div></div>
+  <div class="tarjeta"><div class="etq">Adeudo</div><div class="num">{{ adeudo|dinero }}</div></div>
+</div>
+
+<div class="panel"><h2>Calificaciones</h2>{{ tabla_boleta(boleta) }}</div>
+
+<div class="panel">
+  <h2>Colegiaturas</h2>
+  <div class="tabla-wrap"><table>
+    <tr><th>Concepto</th><th>Fecha límite</th><th class="n">Monto</th><th>Estado</th></tr>
+    {% for c in cargos %}
+    <tr><td>{{ c.concepto }}</td><td>{{ c.fecha_limite }}</td><td class="n">{{ c.monto|dinero }}</td><td>{{ badge_cargo(c) }}</td></tr>
+    {% else %}<tr><td colspan="4" class="vacio">No tienes cargos.</td></tr>{% endfor %}
+  </table></div>
+</div>
+{% endblock %}

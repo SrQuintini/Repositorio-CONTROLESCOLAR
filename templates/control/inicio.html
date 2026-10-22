@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+{% block titulo %}Control Escolar{% endblock %}
+{% block contenido %}
+<h1>Panel de Control Escolar</h1>
+<p class="sub">Resumen general de la escuela.</p>
+<div class="tarjetas">
+  <div class="tarjeta"><div class="etq">Alumnos</div><div class="num">{{ r.total_alumnos }}</div></div>
+  <div class="tarjeta"><div class="etq">Profesores</div><div class="num">{{ r.total_profesores }}</div></div>
+  <div class="tarjeta"><div class="etq">Materias</div><div class="num">{{ r.total_materias }}</div></div>
+  <div class="tarjeta"><div class="etq">Promedio escuela</div><div class="num">{{ r.promedio_escuela|cal }}</div></div>
+  <div class="tarjeta"><div class="etq">Alumnos reprobando</div><div class="num">{{ r.reprobados }}</div></div>
+  <div class="tarjeta"><div class="etq">Cobrado</div><div class="num">{{ r.cobrado|dinero }}</div></div>
+  <div class="tarjeta"><div class="etq">Por cobrar</div><div class="num">{{ r.por_cobrar|dinero }}</div></div>
+  <div class="tarjeta"><div class="etq">Cargos vencidos</div><div class="num">{{ r.vencidos }}</div></div>
+</div>
+<div class="panel">
+  <h2>Reportes</h2>
+  <a class="boton" href="{{ url_for('control.reporte_csv') }}">Descargar reporte de alumnos (CSV)</a>
+</div>
+{% endblock %}
